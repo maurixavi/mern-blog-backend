@@ -3,10 +3,15 @@ const cors = require('cors');
 require('dotenv').config(); 
 const mongoose = require('mongoose');
 const User = require('./models/User');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 const app = express();
 
 app.use(cors());
 app.use(express.json());
+
+const salt = bcrypt.genSaltSync(10);
+const secret = bcrypt.genSaltSync(20);
 
 mongoose.connect(process.env.MONGODB_URI, {
   useNewUrlParser: true,
@@ -24,13 +29,32 @@ app.post('/register', async (req, res) => {
       return res.status(400).json({ error: 'Username already exists' });
     }
 
-    const userDoc = await User.create({ username, password });
+    const userDoc = await User.create({ 
+			username, 
+			password:bcrypt.hashSync(password, salt) });
     res.json(userDoc);
   } catch (err) {
     res.status(500).json({ error: 'An error occurred while creating the user' });
   }
 });
 
+app.post('/login', async (req, res) => {
+  const { username, password } = req.body;
+	const existingUser = await User.findOne({ username });
+	const passOk = bcrypt.compareSync(password, existingUser.password); 
+
+  if (passOk) {
+		//logged in
+		jwt.sign({username, id:existingUser._id}, secret, {}, (err,token) => {
+			if (err) throw err;
+			res.json(token)
+		})
+	} else {
+		res.status(400).json('Wrong credentials')
+	}
+
+});
+
 app.listen(4000, () => {
-  console.log('Servidor corriendo en el puerto 4000');
+  console.log('Server running on port 4000');
 });
