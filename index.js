@@ -9,7 +9,6 @@ const app = express();
 
 app.use(cors({ origin: '*' }));
 
-app.use(cors());
 app.use(express.json());
 
 const salt = bcrypt.genSaltSync(10);
