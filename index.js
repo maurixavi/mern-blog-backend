@@ -7,6 +7,15 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const app = express();
 
+const corsOptions = {
+  origin: 'https://66579d00b69bc244ab96777b--peppy-raindrop-67c9d9.netlify.app', 
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  credentials: true,
+  optionsSuccessStatus: 204,
+};
+
+app.use(cors(corsOptions));
+
 app.use(cors());
 app.use(express.json());
 
