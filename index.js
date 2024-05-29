@@ -8,7 +8,7 @@ const jwt = require('jsonwebtoken');
 const app = express();
 
 const corsOptions = {
-  origin: '*', 
+  origin: 'https://peppy-raindrop-67c9d9.netlify.app', 
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   credentials: true,
   optionsSuccessStatus: 204,
