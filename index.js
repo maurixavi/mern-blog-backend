@@ -2,7 +2,6 @@ const express = require('express');
 const cors = require('cors');
 require('dotenv').config(); 
 const mongoose = require('mongoose');
-//const morgan = require('morgan');
 const User = require('./models/User');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
@@ -48,10 +47,9 @@ app.post('/login', async (req, res) => {
 	const passOk = bcrypt.compareSync(password, existingUser.password); 
 
   if (passOk) {
-		//logged in
 		jwt.sign({username, id:existingUser._id}, secret, {}, (err,token) => {
 			if (err) throw err;
-			res.json(token)
+			res.cookie('token', token).json('ok');
 		})
 	} else {
 		res.status(400).json('Wrong credentials')
@@ -59,10 +57,8 @@ app.post('/login', async (req, res) => {
 
 });
 
-//app.use(morgan('combined'));
-
 app.get('/', (req, res) => {
-  res.send('Hello World!');
+  res.send('MERN Blog API');
 });
 
 app.listen(port, () => console.log(`server running on PORT ${port}`));
