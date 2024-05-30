@@ -10,7 +10,8 @@ const app = express();
 
 const port = process.env.PORT || 4000
 
-app.use(cors({ origin: '*' }));
+const whitelist = ['http://localhost:3000', 'https://mern-blog-client-nn6u-mvbev06l1.vercel.app/']
+app.use(cors({credentials: true, origin: whitelist}));
 app.use(express.json());
 app.use(cookieParser())
 
