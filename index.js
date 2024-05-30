@@ -5,16 +5,17 @@ const mongoose = require('mongoose');
 const User = require('./models/User');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const cookieParser = require('cookie-parser');
 const app = express();
 
 const port = process.env.PORT || 4000
 
 app.use(cors({ origin: '*' }));
-
 app.use(express.json());
+app.use(cookieParser())
 
 const salt = bcrypt.genSaltSync(10);
-const secret = bcrypt.genSaltSync(20);
+const secret = 'asdaf4554asd45asdxdggdsfk1'
 
 mongoose.connect(process.env.MONGODB_URI, {
   useNewUrlParser: true,
@@ -56,6 +57,16 @@ app.post('/login', async (req, res) => {
 	}
 
 });
+
+app.get('/profile', (req, res) => {
+  const {token} = req.cookies
+  jwt.verify(token, secret, {}, (err,info) => {
+    if (err) throw err
+    res.json(info)
+  })
+  
+});
+
 
 app.get('/', (req, res) => {
   res.send('MERN Blog API');
