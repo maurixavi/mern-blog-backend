@@ -2,11 +2,13 @@ const express = require('express');
 const cors = require('cors');
 require('dotenv').config(); 
 const mongoose = require('mongoose');
-const morgan = require('morgan');
+//const morgan = require('morgan');
 const User = require('./models/User');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const app = express();
+
+const port = process.env.PORT || 4000
 
 app.use(cors({ origin: '*' }));
 
@@ -57,12 +59,10 @@ app.post('/login', async (req, res) => {
 
 });
 
-app.use(morgan('combined'));
+//app.use(morgan('combined'));
 
 app.get('/', (req, res) => {
   res.send('Hello World!');
 });
 
-app.listen(4000, () => {
-  console.log('Server running on port 4000');
-});
+app.listen(port, () => console.log(`server running on PORT ${port}`));
