@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 require('dotenv').config(); 
 const mongoose = require('mongoose');
+const morgan = require('morgan');
 const User = require('./models/User');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
@@ -56,8 +57,10 @@ app.post('/login', async (req, res) => {
 
 });
 
-app.get('/health', (req, res) => {
-  res.status(200).json({ status: 'ok' });
+app.use(morgan('combined'));
+
+app.get('/', (req, res) => {
+  res.send('Hello World!');
 });
 
 app.listen(4000, () => {
