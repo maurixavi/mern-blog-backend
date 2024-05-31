@@ -12,7 +12,16 @@ const port = process.env.PORT || 4000;
 const jwtSecret = 'asdaf4554asd45asdxdggdsfk1'
 
 const whitelist = ['http://localhost:3000', 'https://mern-blog-client-nn6u.vercel.app/'];
-app.use(cors({ origin: whitelist }));
+app.use(cors({
+  credentials: true,
+  origin: function (origin, callback) {
+    if (whitelist.indexOf(origin) !== -1 || !origin) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  }
+}));
 app.use(express.json());
 app.use(cookieParser());
 
