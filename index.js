@@ -73,7 +73,9 @@ app.post('/login', async (req, res) => {
       return res.status(500).json({ error: 'Token generation failed' });
     }
     console.log('Login successful for:', username);
-    res.cookie('token', token).json({
+    res.cookie('token', token, {
+      sameSite: 'None'
+    }).json({
       token: token,
       id: existingUser._id,
       username,
