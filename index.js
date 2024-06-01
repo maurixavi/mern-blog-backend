@@ -74,6 +74,8 @@ app.post('/login', async (req, res) => {
     }
     console.log('Login successful for:', username);
     res.cookie('token', token, {
+      httpOnly: true,
+      secure: true, 
       sameSite: 'None'
     }).json({
       token: token,
