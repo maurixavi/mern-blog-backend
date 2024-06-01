@@ -11,7 +11,7 @@ const app = express();
 const port = process.env.PORT || 4000;
 const jwtSecret = 'asdaf4554asd45asdxdggdsfk1'
 
-const whitelist = ['http://localhost:3000', 'https://mern-blog-client-nn6u.vercel.app/'];
+const whitelist = ['http://localhost:3000', 'https://mern-blog-client-nn6u.vercel.app/', 'https://mern-blog-client-torr.onrender.com'];
 app.use(cors({
   credentials: true,
   origin: function (origin, callback) {
@@ -73,7 +73,7 @@ app.post('/login', async (req, res) => {
       return res.status(500).json({ error: 'Token generation failed' });
     }
     console.log('Login successful for:', username);
-    res.json({
+    res.cookie('token', token).json({
       token: token,
       id: existingUser._id,
       username,
@@ -83,16 +83,12 @@ app.post('/login', async (req, res) => {
 
 app.get('/profile', (req, res) => {
   const { token } = req.cookies;
-  if (!token) {
-    return res.status(401).json({ error: 'No token provided' });
-  }
-
-  jwt.verify(token, jwtSecret, {}, (err, decoded) => {
+  jwt.verify(token, jwtSecret, {}, (err, info) => {
     if (err) {
       console.error('Token verification failed:', err);
       return res.status(401).json({ error: 'Invalid token' });
     }
-    res.json(decoded);
+    res.json(info);
   });
 });
 
