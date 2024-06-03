@@ -137,6 +137,11 @@ app.get('/post', async (req, res) => {
   res.json(posts)
 })
 
+app.get('/post/:id', async (req, res) => {
+  const {id} = req.params
+  const postDoc = await Post.findById(id).populate('author', ['username'])
+  res.json(postDoc)
+})
 
 app.get('/', (req, res) => {
   res.send('MERN Blog API');
