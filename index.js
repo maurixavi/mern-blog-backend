@@ -3,10 +3,15 @@ const cors = require('cors');
 require('dotenv').config(); 
 const mongoose = require('mongoose');
 const User = require('./models/User');
+const Post = require('./models/Post');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const cookieParser = require('cookie-parser');
 const app = express();
+const multer = require('multer')
+const uploadMiddleware = multer({dest: 'uploads/'})
+const fs = require('fs')
+
 
 const port = process.env.PORT || 4000;
 const jwtSecret = 'asdaf4554asd45asdxdggdsfk1'
@@ -24,6 +29,7 @@ app.use(cors({
 }));
 app.use(express.json());
 app.use(cookieParser());
+app.use('/uploads', express.static(__dirname + '/uploads'))
 
 const saltRounds = 10; // Número de rondas de hashing para bcrypt
 
@@ -99,6 +105,38 @@ app.get('/profile', (req, res) => {
 app.post('/logout', (req, res) => {
   res.clearCookie('token').json({ message: 'Logged out' });
 });
+
+app.post('/post', uploadMiddleware.single('file'), async (req, res) => {
+  const {originalname, path} = req.file
+  const parts = originalname.split('.')
+  const ext = parts[parts.length - 1]
+  const newPath = path+'.'+ext
+  fs.renameSync(path, newPath)
+
+  const {token} = req.cookies;
+  jwt.verify(token, jwtSecret, {}, async (err, info) => {
+    if (err) {
+      console.error('Token verification FALLO:', err);
+      return res.status(401).json({ error: 'Invalid token' });
+    }
+    const {title, summary, content } = req.body
+    const postDoc = await Post.create({ 
+      title, 
+      summary,
+      content, 
+      cover:newPath, 
+      author:info.id,
+    });
+    res.json(postDoc)
+  });
+})
+
+app.get('/post', async (req, res) => {
+  const posts = await Post.find().populate('author').sort({createdAt:-1}).limit(12)
+  // console.log(posts)
+  res.json(posts)
+})
+
 
 app.get('/', (req, res) => {
   res.send('MERN Blog API');
