@@ -117,7 +117,7 @@ app.post('/post', uploadMiddleware.single('file'), async (req, res) => {
   const {token} = req.cookies;
   jwt.verify(token, jwtSecret, {}, async (err, info) => {
     if (err) {
-      console.error('Token verification FALLO:', err);
+      console.error('Token verification failed:', err);
       return res.status(401).json({ error: 'Invalid token' });
     }
     const {title, summary, content } = req.body
@@ -125,7 +125,8 @@ app.post('/post', uploadMiddleware.single('file'), async (req, res) => {
       title, 
       summary,
       content, 
-      cover:newPath, 
+      cover: `https://mern-blog-api-eight.vercel.app/uploads/${newPath}`,
+      // cover:newPath, 
       author:info.id,
     });
     res.json(postDoc)
