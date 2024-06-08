@@ -47,7 +47,7 @@ app.use(fileUpload({
   tempFileDir: './uploads',
   limits: { fileSize: 50 * 1024 * 1024 } 
 }));
-
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 
 const saltRounds = 10;
