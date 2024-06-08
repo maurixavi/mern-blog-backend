@@ -40,10 +40,15 @@ app.set("trust proxy", 1);
 app.use(express.json());
 app.use(cookieParser());
 
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ limit: '50mb', extended: true }));
 app.use(fileUpload({
   useTempFiles: true,
-  tempFileDir: './uploads'
+  tempFileDir: './uploads',
+  limits: { fileSize: 50 * 1024 * 1024 } 
 }));
+
+
 
 const saltRounds = 10;
 
@@ -131,7 +136,11 @@ app.post('/post', async (req, res) => {
     }
 
     const image = req.files.file;
-    console.log(image)
+    if (image.size > 50 * 1024 * 1024) { 
+      return res.status(400).json({ error: 'File size exceeds the limit of 50MB' });
+    }
+
+    console.log('Image to upload:', image);
 
     cloudinary.uploader.upload(image.tempFilePath, async (error, result) => {
       if (error) {
@@ -139,6 +148,8 @@ app.post('/post', async (req, res) => {
         return res.status(500).send(error);
       }
 
+      console.log('Cloudinary upload result:', result);
+      
       const { title, summary, content } = req.body;
       const postDoc = await Post.create({
         title,
