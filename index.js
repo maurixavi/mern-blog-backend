@@ -44,10 +44,10 @@ app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 app.use(fileUpload({
   useTempFiles: true,
-  tempFileDir: './uploads',
+  tempFileDir: './tmp',
   limits: { fileSize: 50 * 1024 * 1024 } 
 }));
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+// app.use('/tmp', express.static(path.join(__dirname, 'tmp')));
 
 
 const saltRounds = 10;
