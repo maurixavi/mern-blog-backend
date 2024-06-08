@@ -32,7 +32,9 @@ app.use(cors({
     } else {
       callback(new Error('Not allowed by CORS'));
     }
-  }
+  },
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin', 'Access-Control-Allow-Origin']
 }));
 app.set("trust proxy", 1);
 app.use(express.json());
@@ -133,7 +135,7 @@ app.post('/post', async (req, res) => {
 
     cloudinary.uploader.upload(image.tempFilePath, async (error, result) => {
       if (error) {
-        console.log('Error: ---', error)
+        console.error('Error uploading to Cloudinary:', error); 
         return res.status(500).send(error);
       }
 
@@ -171,6 +173,7 @@ app.put('/post', async (req, res) => {
 
       cloudinary.uploader.upload(image.tempFilePath, async (error, result) => {
         if (error) {
+          console.error('Error uploading to Cloudinary:', error);
           return res.status(500).send(error);
         }
 
