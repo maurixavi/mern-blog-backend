@@ -46,8 +46,6 @@ app.use(fileUpload({
 const saltRounds = 10;
 
 mongoose.connect(process.env.MONGODB_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
 })
   .then(() => console.log('Conectado a MongoDB'))
   .catch((err) => console.error('Error al conectar a MongoDB', err));
@@ -131,9 +129,11 @@ app.post('/post', async (req, res) => {
     }
 
     const image = req.files.file;
+    console.log(image)
 
     cloudinary.uploader.upload(image.tempFilePath, async (error, result) => {
       if (error) {
+        console.log('Error: ---', error)
         return res.status(500).send(error);
       }
 
