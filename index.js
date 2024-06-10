@@ -218,7 +218,7 @@ app.put('/post', async (req, res) => {
 });
 
 app.get('/post', async (req, res) => {
-  const posts = await Post.find().populate('author').sort({ createdAt: -1 });
+  const posts = await Post.find().populate('author').sort({ createdAt: -1 }).limit(5);
   res.json(posts);
 });
 
