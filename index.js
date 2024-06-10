@@ -218,7 +218,7 @@ app.put('/post', async (req, res) => {
 });
 
 app.get('/post', async (req, res) => {
-  const posts = await Post.find().populate('author').sort({ createdAt: -1 }).limit(12);
+  const posts = await Post.find().populate('author').sort({ createdAt: -1 });
   res.json(posts);
 });
 
@@ -226,6 +226,28 @@ app.get('/post/:id', async (req, res) => {
   const { id } = req.params;
   const postDoc = await Post.findById(id).populate('author', ['username']);
   res.json(postDoc);
+});
+
+app.delete('/post/:id', async (req, res) => {
+  const { token } = req.cookies;
+  jwt.verify(token, jwtSecret, {}, async (err, info) => {
+    if (err) {
+      console.error('Token verification failed:', err);
+      return res.status(401).json({ error: 'Invalid token' });
+    }
+
+    const { id } = req.params;
+    const postDoc = await Post.findById(id);
+    const isAuthor = JSON.stringify(postDoc.author) === JSON.stringify(info.id);
+
+    if (!isAuthor) {
+      return res.status(400).json('You are not the author of the post');
+    }
+
+    await Post.findByIdAndDelete(id);
+
+    res.json({ message: 'Post deleted successfully' });
+  });
 });
 
 app.get('/', (req, res) => {
